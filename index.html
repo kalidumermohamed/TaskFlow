@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Modern Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h1>TaskFlow</h1>
+            </div>
+            
+            <div class="navbar-controls">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search tasks..."
+                        aria-label="Search tasks"
+                    >
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <button 
+                    id="themeToggle" 
+                    class="theme-toggle" 
+                    aria-label="Toggle dark mode"
+                    title="Toggle dark mode (D)"
+                >
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Statistics Section -->
+        <section class="stats-section hidden">
+            <div class="stat-card">
+                <div class="stat-label">Total Tasks</div>
+                <div class="stat-value" id="totalTasks">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="completedTasks">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Remaining</div>
+                <div class="stat-value" id="remainingTasks">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="progress-container">
+                    <div class="stat-label">Progress</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Task Section (hidden by default; shown when Add Task clicked) -->
+        <section class="add-task-section hidden">
+            <div class="add-task-card">
+                <h2>Create New Task</h2>
+                <form id="taskForm" class="task-form">
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title *</label>
+                        <input 
+                            type="text" 
+                            id="taskTitle" 
+                            class="form-input" 
+                            placeholder="What do you need to do?"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDescription">Description</label>
+                        <textarea 
+                            id="taskDescription" 
+                            class="form-input" 
+                            rows="3"
+                            placeholder="Add more details (optional)"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="taskPriority">Priority</label>
+                            <select id="taskPriority" class="form-input">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="taskDueDate">Due Date</label>
+                            <input 
+                                type="date" 
+                                id="taskDueDate" 
+                                class="form-input"
+                            >
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-submit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Task
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="filter-section hidden">
+            <div class="filter-buttons">
+                <button id="addTaskBtn" class="btn btn-primary new-task-btn">New Task</button>
+                <button class="filter-btn active" data-filter="all">
+                    <span class="filter-label">All Tasks</span>
+                    <span class="filter-count" data-filter-count="all">0</span>
+                </button>
+                <button class="filter-btn" data-filter="active">
+                    <span class="filter-label">Active</span>
+                    <span class="filter-count" data-filter-count="active">0</span>
+                </button>
+                <button class="filter-btn" data-filter="completed">
+                    <span class="filter-label">Completed</span>
+                    <span class="filter-count" data-filter-count="completed">0</span>
+                </button>
+                <button class="filter-btn" data-filter="high">
+                    <span class="filter-label">High Priority</span>
+                    <span class="filter-count" data-filter-count="high">0</span>
+                </button>
+                <button class="filter-btn" data-filter="medium">
+                    <span class="filter-label">Medium Priority</span>
+                    <span class="filter-count" data-filter-count="medium">0</span>
+                </button>
+                <button class="filter-btn" data-filter="low">
+                    <span class="filter-label">Low Priority</span>
+                    <span class="filter-count" data-filter-count="low">0</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Tasks List Section -->
+        <section class="tasks-section">
+            <div id="tasksList" class="tasks-list"></div>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-state-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3>No tasks yet</h3>
+                                <p>Create your first task to get started with TaskFlow. You've got this! 🚀</p>
+                                <div style="margin-top:1rem">
+                                    <button id="startTask" class="btn btn-primary">Create a Task</button>
+                                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button (Mobile) -->
+    <button id="fabButton" class="fab" title="Add task (M)" aria-label="Add new task">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+    </button>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h3 id="confirmTitle">Are you sure?</h3>
+            <p id="confirmMessage">This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button id="confirmCancel" class="btn btn-secondary">Cancel</button>
+                <button id="confirmDelete" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content edit-modal">
+            <h3>Edit Task</h3>
+            <form id="editForm" class="task-form">
+                <div class="form-group">
+                    <label for="editTaskTitle">Task Title *</label>
+                    <input 
+                        type="text" 
+                        id="editTaskTitle" 
+                        class="form-input" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="editTaskDescription">Description</label>
+                    <textarea 
+                        id="editTaskDescription" 
+                        class="form-input" 
+                        rows="3"
+                    ></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editTaskPriority">Priority</label>
+                        <select id="editTaskPriority" class="form-input">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTaskDueDate">Due Date</label>
+                        <input 
+                            type="date" 
+                            id="editTaskDueDate" 
+                            class="form-input"
+                        >
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" id="editCancel" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
